@@ -41,9 +41,9 @@ const AddCategoryModal = (props) => {
 
   const submitForm = async (e) => {
     dispatch({ type: "loading", payload: true });
-    // Reset and prevent the form
+    // Prevent the form default submission
     e.preventDefault();
-    e.target.reset();
+    // Removed e.target.reset() to prevent clearing file input prematurely
 
     if (!fData.cImage) {
       dispatch({ type: "loading", payload: false });
