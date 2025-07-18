@@ -13,7 +13,7 @@ const SoldProducts = () => {
   const fetchSoldProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:8000/api/product/sold-products", {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/sold-products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,7 +80,7 @@ const SoldProducts = () => {
                       <li key={product.productId} className="flex items-center space-x-4 my-2">
                         {product.images && product.images.length > 0 && (
                           <img
-                            src={`http://localhost:8000/uploads/products/${product.images[0]}`}
+                            src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/uploads/products/${product.images[0]}`}
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded"
                           />

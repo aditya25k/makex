@@ -3,7 +3,7 @@ const apiURL = process.env.REACT_APP_API_URL;
 
 export const getSingleProduct = async (pId) => {
   try {
-    let res = await axios.post(`${apiURL}/api/product/single-product`, {
+    let res = await axios.post(`${apiURL}/product/single-product`, {
       pId: pId,
     });
     return res.data;
@@ -16,7 +16,7 @@ export const postAddReview = async (formData) => {
   try {
     const token = localStorage.getItem("token");
     let res = await axios.post(
-      `${apiURL}/api/product/add-review`,
+      `${apiURL}/product/add-review`,
       formData,
       {
         headers: {
@@ -32,7 +32,7 @@ export const postAddReview = async (formData) => {
 
 export const postDeleteReview = async (formData) => {
   try {
-    let res = await axios.post(`${apiURL}/api/product/delete-review`, formData);
+    let res = await axios.post(`${apiURL}/product/delete-review`, formData);
     return res.data;
   } catch (error) {
     console.log(error);

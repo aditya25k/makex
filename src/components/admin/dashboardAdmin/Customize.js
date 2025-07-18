@@ -151,7 +151,7 @@ const AllImages = () => {
       <div className="grid grid-cols-1 md:grid md:grid-cols-2 lg:grid-cols-3 my-4">
 {data.sliderImages.length > 0 ? (
           data.sliderImages.map((item, index) => {
-            const imageUrl = apiURL + (item.slideImage.startsWith('/') ? '' : '/') + item.slideImage;
+            const imageUrl = apiURL.replace('/api', '') + '/' + encodeURIComponent(item.slideImage.replace(/^\/api\/+/, '').replace(/^\/+/, ''));
             console.log("Slider image URL:", imageUrl);
             return (
               <div key={index} className="relative col-span-1 m-2 border">

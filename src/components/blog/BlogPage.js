@@ -15,7 +15,7 @@ const BlogPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:8000/api/blog/posts');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/blog/posts`);
         setPosts(res.data.posts);
         setFeaturedPost(res.data.posts.find(post => post.isFeatured));
         setCategories(['all', ...new Set(res.data.posts.map(post => post.category))]);
@@ -94,7 +94,7 @@ const BlogPage = () => {
               <div className="md:flex-shrink-0 md:w-1/2">
                 <img
                   className="h-full w-full object-cover"
-                  src={`http://localhost:8000/uploads/blog/${featuredPost.image}`}
+                  src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/uploads/blog/${featuredPost.image}`}
                   alt={featuredPost.title}
                 />
               </div>
@@ -135,7 +135,7 @@ const BlogPage = () => {
             <div className="p-6">
               <img
                 className="w-full h-96 object-cover rounded-lg mb-8"
-                src={`http://localhost:8000/uploads/blog/${selectedPost.image}`}
+                src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/uploads/blog/${selectedPost.image}`}
                 alt={selectedPost.title}
               />
               <div className="prose max-w-none">
@@ -183,7 +183,7 @@ const BlogPage = () => {
                   <div key={post._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                     <img
                       className="w-full h-48 object-cover"
-                      src={`http://localhost:8000/uploads/blog/${post.image}`}
+                      src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/uploads/blog/${post.image}`}
                       alt={post.title}
                     />
                     <div className="p-6">

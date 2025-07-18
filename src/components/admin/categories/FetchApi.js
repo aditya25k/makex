@@ -35,11 +35,12 @@ export const createCategory = async ({
   formData.append("cStatus", cStatus);
 
   try {
-    let res = await axios.post(
-      `${apiURL}/category/add-category`,
-      formData,
-      Headers()
-    );
+    let res = await axios.post(`${apiURL}/category/add-category`, formData, {
+      headers: {
+        Authorization: `Bearer ${BearerToken()}`,
+        // Let axios set Content-Type for FormData automatically
+      },
+    });
     return res.data;
   } catch (error) {
     console.log(error);

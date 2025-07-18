@@ -54,8 +54,8 @@ if (!products || products.length === 0) return null;
 return (
   <div className="filtered-slider-container">
     <h2 className="text-lg font-semibold mb-2">{title}</h2>
-<img
-      src={`${process.env.REACT_APP_API_BASE_URL || "http://localhost:8000"}${products[slide].slideImage || products[slide].imageUrl || products[slide].pImage || ""}`}
+    <img
+      src={`${(process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace('/api', '') : '')}${products[slide].slideImage || products[slide].imageUrl || products[slide].pImage || ""}`}
       alt={products[slide].pName || "product"}
       className="w-full cursor-pointer"
       style={{ maxHeight: "600px", objectFit: "fill" }}

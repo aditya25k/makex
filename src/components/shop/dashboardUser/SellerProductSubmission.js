@@ -66,7 +66,7 @@ const SellerProductSubmission = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:8000/api/product/user-products", {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/user-products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -118,7 +118,7 @@ const SellerProductSubmission = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:8000/api/product/delete-product",
+        `${process.env.REACT_APP_API_URL}/product/delete-product`,
         { pId: productId },
         {
           headers: {
@@ -238,8 +238,8 @@ const SellerProductSubmission = () => {
 
       const token = localStorage.getItem("token");
       const endpoint = formData.pId
-        ? "http://localhost:8000/api/product/edit-product"
-        : "http://localhost:8000/api/product/draft";
+        ? `${process.env.REACT_APP_API_URL}/product/edit-product`
+        : `${process.env.REACT_APP_API_URL}/product/draft`;
 
       const res = await axios.post(endpoint, data, {
         headers: {
@@ -347,7 +347,7 @@ const SellerProductSubmission = () => {
                               {product.pImages && product.pImages.length > 0 ? (
                                 <img
                                   className="h-10 w-10 rounded-md object-cover"
-                                  src={`http://localhost:8000/uploads/products/${product.pImages[0]}`}
+                                  src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/uploads/products/${product.pImages[0]}`}
                                   alt={product.pName}
                                 />
                               ) : (

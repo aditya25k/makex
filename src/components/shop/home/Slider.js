@@ -21,7 +21,7 @@ const Slider = (props) => {
         {data.sliderImages.length > 0 ? (
           <img
             className="w-full"
-            src={`${apiURL}${data.sliderImages[slide].slideImage}`}
+            src={`${apiURL.replace('/api', '')}/${encodeURIComponent(data.sliderImages[slide].slideImage.replace(/^\/api\/+/, '').replace(/^\/+/, ''))}`}
             alt="sliderImage"
           />
         ) : (
