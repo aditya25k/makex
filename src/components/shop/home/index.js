@@ -80,132 +80,138 @@ return (
 };
 
 const HomeComponent = () => {
-const { data, dispatch } = useContext(HomeContext);
-const [categories, setCategories] = useState([]);
-const [loading, setLoading] = useState(true);
-const [sliders, setSliders] = useState([]);
-const history = useHistory();
+  const { data, dispatch } = useContext(HomeContext);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sliders, setSliders] = useState([]);
+  const history = useHistory();
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [productsRes, categoriesRes, sliderImages] = await Promise.all([
-        getAllProduct(),
-        getAllCategory(),
-        getSlideImages(),
-      ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [productsRes, categoriesRes, sliderImages] = await Promise.all([
+          getAllProduct(),
+          getAllCategory(),
+          getSlideImages(),
+        ]);
 
-      console.log("Fetched sliderImages:", sliderImages);
+        if (productsRes?.Products) {
+          dispatch({ type: "setProducts", payload: productsRes.Products });
+        }
 
-      if (productsRes?.Products) {
-        dispatch({ type: "setProducts", payload: productsRes.Products });
+        if (categoriesRes?.Categories) {
+          setCategories(categoriesRes.Categories);
+        }
+
+        if (sliderImages && sliderImages.length > 0) {
+          dispatch({ type: "sliderImages", payload: sliderImages });
+          setSliders(sliderImages);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      if (categoriesRes?.Categories) {
-        setCategories(categoriesRes.Categories);
-      }
+    fetchData();
+  }, [dispatch]);
 
-      if (sliderImages && sliderImages.length > 0) {
-        dispatch({ type: "sliderImages", payload: sliderImages });
-        setSliders(sliderImages);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSliderImageClick = (product) => {
+    history.push(`/products/${product._id}`);
   };
 
-  fetchData();
-}, [dispatch]);
+  // Group products by category id
+  const productsByCategory = {};
+  if (data.products && categories.length > 0) {
+    categories.forEach((cat) => {
+      productsByCategory[cat._id] = [];
+    });
+    data.products.forEach((product) => {
+      if (product.pCategory && productsByCategory[product.pCategory._id]) {
+        productsByCategory[product.pCategory._id].push(product);
+      }
+    });
+  }
 
-const handleSliderImageClick = (product) => {
-history.push(`/products/${product._id}`);
-};
+  return (
+    <Fragment>
+      <SearchBar />
 
-// Group products by category id
-const productsByCategory = {};
-if (data.products && categories.length > 0) {
-categories.forEach((cat) => {
-productsByCategory[cat._id] = [];
-});
-data.products.forEach((product) => {
-if (product.pCategory && productsByCategory[product.pCategory._id]) {
-productsByCategory[product.pCategory._id].push(product);
-}
-});
-}
+      <FilteredSlider
+        title="Admin Added Sliders"
+        products={sliders}
+        onImageClick={(slide) => {
+          if (slide.pId) {
+            history.push(`/products/${slide.pId}`);
+          }
+        }}
+      />
 
-return (
-  <Fragment>
-    <SearchBar />
+      <section className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <ProductCategory />
+      </section>
 
-    {/* Debug: Display sliderImages JSON */}
-    {/* Removed the JSON display as per user request */}
-    {/* <pre className="text-xs p-2 bg-gray-100 overflow-auto max-h-40 mb-4">
-      {JSON.stringify(sliders, null, 2)}
-    </pre> */}
-
-    {/* Admin added sliders */}
-    <FilteredSlider
-      title="Admin Added Sliders"
-      products={sliders}
-      onImageClick={(slide) => {
-        if (slide.pId) {
-          history.push(`/products/${slide.pId}`);
-        }
-      }}
-    />
-
-    {/* Category Section - Responsive padding */}
-    <section className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <ProductCategory />
-    </section>
-
-    {/* Featured Products - Responsive grid */}
-    <section className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Featured Products</h2>
-      {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-lg aspect-square animate-pulse"></div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {data.products?.slice(0, 8).map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
-      )}
-    </section>
-
-    {/* Products by Category - Responsive sections */}
-    {categories.map((category) => (
-      <section key={category._id} className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-4 sm:mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">{category.cName}</h2>
-          <Link
-            to={`/products/category/${category._id}`}
-            className="text-sm sm:text-base text-blue-600 hover:underline"
-          >
-            View All
-          </Link>
-        </div>
-        {data.products && data.products.length > 0 ? (
-          <HorizontalProductList
-            products={data.products.filter(p => p.pCategory && p.pCategory._id === category._id).slice(0, 6)}
-          />
+      <section className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-extrabold mb-6 text-gray-900">
+          Featured Products
+        </h2>
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-lg aspect-square animate-pulse"
+              ></div>
+            ))}
+          </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            No products available in this category
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {data.products?.slice(0, 8).map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                className="transform hover:scale-105 transition-transform duration-300 shadow-lg hover:shadow-2xl rounded-lg"
+              />
+            ))}
           </div>
         )}
       </section>
-    ))}
-  </Fragment>
-);
+
+      {categories.map((category) => (
+        <section
+          key={category._id}
+          className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+        >
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              {category.cName}
+            </h2>
+            <Link
+              to={`/products/category/${category._id}`}
+              className="text-base sm:text-lg text-indigo-600 hover:underline"
+            >
+              View All
+            </Link>
+          </div>
+          {data.products && data.products.length > 0 ? (
+            <HorizontalProductList
+              products={data.products
+                .filter(
+                  (p) => p.pCategory && p.pCategory._id === category._id
+                )
+                .slice(0, 6)}
+            />
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              No products available in this category
+            </div>
+          )}
+        </section>
+      ))}
+    </Fragment>
+  );
 };
 
 const Home = (props) => {

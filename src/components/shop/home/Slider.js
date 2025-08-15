@@ -9,18 +9,28 @@ const apiURL = process.env.REACT_APP_API_URL;
 const Slider = (props) => {
   const { data, dispatch } = useContext(HomeContext);
   const [slide, setSlide] = useState(0);
+  const [fade, setFade] = useState(true);
 
   useEffect(() => {
     sliderImages(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Handle slide change with fade effect
+  const changeSlide = (newSlide) => {
+    setFade(false);
+    setTimeout(() => {
+      setSlide(newSlide);
+      setFade(true);
+    }, 300);
+  };
+
   return (
     <Fragment>
-      <div className="relative mt-16 bg-gray-100 border-2">
+      <div className="relative mt-16 bg-gray-100 border-2 overflow-hidden rounded-lg">
         {data.sliderImages.length > 0 ? (
           <img
-            className="w-full"
+            className={`w-full transition-opacity duration-300 ease-in-out ${fade ? "opacity-100" : "opacity-0"}`}
             src={`${apiURL.replace('/api', '')}/${encodeURIComponent(data.sliderImages[slide].slideImage.replace(/^\/api\/+/, '').replace(/^\/+/, ''))}`}
             alt="sliderImage"
           />
@@ -30,45 +40,55 @@ const Slider = (props) => {
 
         {data?.sliderImages?.length > 0 ? (
           <>
-            <svg
-              onClick={(e) =>
-                prevSlide(data.sliderImages.length, slide, setSlide)
+            <button
+              onClick={() =>
+                changeSlide((slide - 1 + data.sliderImages.length) % data.sliderImages.length)
               }
-              className={`z-10 absolute top-0 left-0 mt-64 flex justify-end items-center box-border flex justify-center w-12 h-12 text-gray-700  cursor-pointer hover:text-yellow-700`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              aria-label="Previous Slide"
+              className="z-10 absolute top-1/2 left-2 transform -translate-y-1/2 flex justify-center items-center w-12 h-12 bg-white bg-opacity-70 rounded-full shadow-md text-gray-700 hover:bg-yellow-400 hover:text-white transition-colors duration-300 focus:outline-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            <svg
-              onClick={(e) =>
-                nextSlide(data.sliderImages.length, slide, setSlide)
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={() =>
+                changeSlide((slide + 1) % data.sliderImages.length)
               }
-              className={`z-10 absolute top-0 right-0 mt-64 flex justify-start items-center box-border flex justify-center w-12 h-12 text-gray-700 cursor-pointer hover:text-yellow-700`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              aria-label="Next Slide"
+              className="z-10 absolute top-1/2 right-2 transform -translate-y-1/2 flex justify-center items-center w-12 h-12 bg-white bg-opacity-70 rounded-full shadow-md text-gray-700 hover:bg-yellow-400 hover:text-white transition-colors duration-300 focus:outline-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
             <div className="absolute inset-0 flex items-center justify-center">
               <a
                 href="#shop"
-                style={{ background: "#303031" }}
-                className="cursor-pointer box-border text-2xl text-white px-4 py-2 rounded"
+                style={{ background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)" }}
+                className="cursor-pointer box-border text-2xl text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-transform duration-300"
               >
                 Shop Now
               </a>

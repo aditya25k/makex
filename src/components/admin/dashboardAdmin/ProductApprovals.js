@@ -28,7 +28,7 @@ const ProductApprovals = () => {
       }
       const token = localStorage.getItem("token");
       console.log("Token from localStorage:", token);
-      const res = await axios.get(`${apiURL}/api/product/pending`, {
+      const res = await axios.get(`${apiURL}/product/pending`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +65,7 @@ const ProductApprovals = () => {
       }
       const token = localStorage.getItem("token");
       await axios.put(
-        `${apiURL}/api/product/${confirmApproveId}/status`,
+        `${apiURL}/product/${confirmApproveId}/status`,
         {
           approvalStatus: "approved",
         },
@@ -115,7 +115,7 @@ const ProductApprovals = () => {
       }
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `${apiURL}/api/product/${selectedProduct._id}/status`,
+        `${apiURL}/product/${selectedProduct._id}/status`,
         {
           approvalStatus: "rejected",
           rejectionReason,
@@ -174,10 +174,10 @@ const ProductApprovals = () => {
             <tbody>
               {pendingProducts.map((product) => (
                 <tr key={product._id}>
-                  <td className="border px-4 py-2">{product.pName}</td>
-                  <td className="border px-4 py-2">{product.pCategory.cName}</td>
-                  <td className="border px-4 py-2">{product.seller.name}</td>
-                  <td className="border px-4 py-2">₹{product.pPrice}</td>
+                  <td className="border px-4 py-2">{product.pName || 'N/A'}</td>
+                  <td className="border px-4 py-2">{product.pCategory?.cName || 'Uncategorized'}</td>
+                  <td className="border px-4 py-2">{product.seller?.name || 'Unknown'}</td>
+                  <td className="border px-4 py-2">₹{product.pPrice || 0}</td>
                   <td className="border px-4 py-2">
                     {confirmApproveId === product._id ? (
                       <>
